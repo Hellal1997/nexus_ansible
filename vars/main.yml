@@ -1,0 +1,7 @@
+---
+# vars file for ansible-nexus
+nexus_port: 8080
+nexus_min_memory: 1200M
+nexus_max_memory: 1200M
+nexus_dir_mem_size: 2G
+nexus_shared_dir: /opt/nexus_shared

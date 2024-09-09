@@ -1,0 +1,7 @@
+---
+nexus_version: "3.40.1-01"  # Update this to the latest version
+nexus_install_dir: "/opt/nexus"
+nexus_download_url: "https://download.sonatype.com/nexus/3/{{ nexus_version }}/nexus-{{ nexus_version }}-unix.tar.gz"
+nexus_user: "nexus"
+nexus_group: "nexus"
+nexus_service_file: "/etc/systemd/system/nexus.service"

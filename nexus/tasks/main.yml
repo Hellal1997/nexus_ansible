@@ -1,0 +1,20 @@
+---
+
+- name: Configure service file nexus.service for Ubuntu
+  template:
+    src: nexus.service.j2
+    dest: /etc/systemd/system/nexus.service
+    owner: "{{ nexus_os_user }}"
+    group: "{{ nexus_os_group }}"
+    mode: '0755'
+
+- name: Nexus service daemon-reload for Ubuntu
+  systemd:
+    name: nexus
+    daemon-reload: true
+
+- name: Enable nexus service on startup
+  service:
+    name: nexus
+    enabled: true
+    state: "{{ nexus_service_state }}"

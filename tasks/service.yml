@@ -1,0 +1,16 @@
+---
+- name: Create Nexus service file
+  copy:
+    src: nexus.service
+    dest: "{{ nexus_service_file }}"
+    mode: '0644'
+
+- name: Reload systemd to recognize Nexus service
+  systemd:
+    daemon_reload: yes
+
+- name: Enable and start Nexus service
+  systemd:
+    name: nexus
+    enabled: yes
+    state: started

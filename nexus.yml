@@ -1,0 +1,8 @@
+---
+- name: Install Nexus on Ubuntu 22.04
+  hosts: all
+  become: yes
+  roles:
+    - role: nexus
+
+

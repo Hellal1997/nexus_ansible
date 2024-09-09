@@ -1,0 +1,62 @@
+---
+- name: Create Nexus group
+  group: name={{ nexus_os_group }} state=present
+
+- name: Create Nexus user
+  user: name={{ nexus_os_user }} group={{ nexus_os_group }} shell={{ nexus_os_user_shell }} state=present
+
+- name: Ensure Nexus installation directory exists
+  file: path={{ nexus_installation_dir }} state=directory
+
+- name: Download and unpack the nexus
+  unarchive:
+    src=http://download.sonatype.com/nexus/3/nexus-{{ nexus_version }}-unix.tar.gz
+    dest={{ nexus_installation_dir }}
+    creates={{ nexus_installation_dir }}/nexus-{{ nexus_version }}
+    remote_src=yes
+    owner={{ nexus_os_user }}
+    group={{ nexus_os_group }}
+    mode="0755"
+
+- name: Set permissions and ownership on some Nexus directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ nexus_os_user }}"
+    group: "{{ nexus_os_group }}"
+    mode: "0755"
+    recurse: true
+  with_items:
+    - "{{ nexus_installation_dir }}/nexus-{{ nexus_version }}"
+    - "{{ nexus_shared_dir }}"
+    - "/var/run/nexus"
+
+- name: Configure data directory for nexus
+  template:
+    src: nexus.vmoptions.j2
+    dest: "{{ nexus_installation_dir }}/nexus-{{ nexus_version }}/bin/nexus.vmoptions"
+    owner: "{{ nexus_os_user }}"
+    group: "{{ nexus_os_group }}"
+    mode: '0755'
+  notify:
+    - restart nexus
+
+- name: Configure Port {{ nexus_port }} for nexus
+  template:
+    src: nexus-default.properties.j2
+    dest: "{{ nexus_installation_dir }}/nexus-{{ nexus_version }}/etc/nexus-default.properties"
+    owner: "{{ nexus_os_user }}"
+    group: "{{ nexus_os_group }}"
+    mode: '0755'
+  notify:
+    - restart nexus
+
+- name: run nexus from user {{ nexus_os_user }}
+  template:
+    src: nexus.rc.j2
+    dest: "{{ nexus_installation_dir }}/nexus-{{ nexus_version }}/bin/nexus.rc"
+    owner: "{{ nexus_os_user }}"
+    group: "{{ nexus_os_group }}"
+    mode: '0755'
+  notify:
+    - restart nexus

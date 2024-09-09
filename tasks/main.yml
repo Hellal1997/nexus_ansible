@@ -1,0 +1,7 @@
+---
+- name: Install and configure Nexus
+  import_tasks: install.yml
+- name: Configure Nexus
+  import_tasks: configure.yml
+- name: Set up Nexus service
+  import_tasks: service.yml

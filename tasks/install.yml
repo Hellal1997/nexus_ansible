@@ -1,0 +1,28 @@
+---
+- name: Create Nexus user and group
+  user:
+    name: "{{ nexus_user }}"
+    group: "{{ nexus_group }}"
+    system: yes
+    create_home: no
+
+- name: Create Nexus installation directory
+  file:
+    path: "{{ nexus_install_dir }}"
+    state: directory
+    owner: "{{ nexus_user }}"
+    group: "{{ nexus_group }}"
+    mode: '0755'
+
+- name: Download Nexus tarball
+  get_url:
+    url: "{{ nexus_download_url }}"
+    dest: "/tmp/nexus-latest.tar.gz"
+
+- name: Extract Nexus tarball
+  unarchive:
+    src: "/tmp/nexus-latest.tar.gz"
+    dest: "{{ nexus_install_dir }}"
+    remote_src: yes
+    extra_opts:
+      - --strip-components=1
